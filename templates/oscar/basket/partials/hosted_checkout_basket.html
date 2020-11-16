@@ -36,7 +36,7 @@
                         </div>
                         {% if line_data.enrollment_code %}
                             <div class="col-md-1 col-xs-12">
-                                <label class="product-price-label text-muted">{% trans 'Item Price' as tmsg %}{{ tmsg | force_escape }}</label>
+                                <label class="product-price-label text-muted">{% trans 'Precio por ítem' as tmsg %}{{ tmsg | force_escape }}</label>
                                 <span>{{ line_data.line.price_incl_tax|currency:"CLP " }}</span>
                             </div>
                             <div class="col-md-3 col-xs-12 form-inline">
@@ -137,7 +137,12 @@
             {% if partner_sku %}
                 <div class="pull-left basket-switch-link">
                     <a href="/basket/add/?sku={{ partner_sku }}" class="btn btn-link">
-                        {{ switch_link_text }}
+                        {# {{ switch_link_text }} #}
+                        {% if switch_link_text == "Click here to purchase multiple seats in this course" %}
+                            Hace click aquí para comprar múltiples cupos para este curso.
+                        {% else %}
+                            Hace click aquí para comprar un cupo individual.
+                        {% endif %}
                     </a>
                 </div>
             {% endif %}
