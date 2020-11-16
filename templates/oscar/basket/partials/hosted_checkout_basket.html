@@ -180,7 +180,7 @@
             <span><i class="fa fa-exclamation-circle"></i></span>
             {# Translators: <strong></strong> tags will bold the text within. Keep the tags and translate the text within. #}
             {% if display_verification_message %}
-                {% trans "{strong_start}Nota:{strong_end} Para obtener un certificado verificado, debe verificar su identidad con una {strong_start}cámara{strong_end} y una  {strong_start}fotografía de su documento de identidad{strong_end}. " as tmsg %}
+                {% trans "{strong_start}Nota:{strong_end} Para obtener un certificado verificado, debe verificar su identidad con una {strong_start}cámara web{strong_end} y una  {strong_start}fotografía de su documento de identidad{strong_end}. " as tmsg %}
                 {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
             {% else %}
                 {% trans "{strong_start}Nota:{strong_end} Para completar su inscripción, seleccione Pagar." as tmsg %}
