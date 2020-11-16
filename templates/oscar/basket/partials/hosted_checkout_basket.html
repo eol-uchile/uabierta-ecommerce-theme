@@ -1,11 +1,12 @@
 {% load i18n %}
+{% load django_markup %}
 {% load core_extras %}
 {% load currency_filters %}
 {% load purchase_info_tags %}
 {% load widget_tweaks %}
 
 {% if not is_bulk_purchase %}
-    {% include 'partials/alert_messages.html' %}
+    {% include 'oscar/partials/alert_messages.html' %}
 {% endif %}
 
 <div id="content-inner">
@@ -31,15 +32,15 @@
                         <div class="col-md-5 col-sm-12">
                             <p class="product-title">{{ line_data.product_title }} {% if line_data.course_key %}- {{ line_data.course_key.org }}
                                 ({{ line_data.course_key.run }}) {% endif %}</p>
-                            {% if line_data.product_description %}<p class="product-description">{{ line_data.product_description }}</p>{% elif line_data.course_key %}<p class="product-description">{{ line_data.course_key }}</p>{% endif %}
+                            <p class="product-description">{{ line_data.product_description|default_if_none:'' }}</p>
                         </div>
                         {% if line_data.enrollment_code %}
                             <div class="col-md-1 col-xs-12">
-                                <label class="product-price-label text-muted">{% trans 'Item Price' %}</label>
+                                <label class="product-price-label text-muted">{% trans 'Item Price' as tmsg %}{{ tmsg | force_escape }}</label>
                                 <span>{{ line_data.line.price_incl_tax|currency:"CLP " }}</span>
                             </div>
                             <div class="col-md-3 col-xs-12 form-inline">
-                                <label class="product-price-label text-muted">{% trans 'Quantity' %}</label>
+                                <label class="product-price-label text-muted">{% trans 'Quantity' as tmsg %}{{ tmsg | force_escape }}</label>
                                 <div class="checkout-quantity form-group">
                                     <div class="input-group spinner  {% if form.errors %}error{% endif %}">
                                         {% render_field form.quantity class+="quantity form-control" min=min_seat_quantity %}
@@ -53,21 +54,23 @@
                                         </div>
                                     </div>
                                     <button class="btn btn-primary update-button" type="submit"
-                                            data-loading-text="{% trans 'Updating...' %}">{% trans "Update" %}</button>
+                                        data-loading-text="{% trans 'Updating...' as tmsg %}{{ tmsg | force_escape }}">{% trans "Update" as tmsg %}{{ tmsg | force_escape }}</button>
                                 </div>
                             </div>
                         {% endif %}
                         <div class="col-md-{% if line_data.enrollment_code %}1{% else %}5{% endif %} col-xs-12 product-prices pull-right">
                             {% if line_data.enrollment_code %}
-                                <label class="product-price-label text-muted">{% trans 'Price' %}</label>
+                            <label class="product-price-label text-muted">{% trans 'Price' as tmsg %}{{ tmsg | force_escape }}</label>
                             {% endif %}
 
                             {% if line_data.line.has_discount %}
                                 <div class="discount">
                                     <div class="benefit">
-                                        {% blocktrans with benefit_value=line_data.benefit_value %}
-                                            {{ benefit_value }} off
-                                        {% endblocktrans %}
+                                        {% filter force_escape %}
+                                            {% blocktrans with benefit_value=line_data.benefit_value %}
+                                                {{ benefit_value }} off
+                                            {% endblocktrans %}
+                                        {% endfilter %}
                                     </div>
                                     <div class="old-price">
                                         {{ line_data.line.line_price_incl_tax|currency:"CLP " }}
@@ -92,9 +95,11 @@
                         <div class="vouchers col-sm-7 col-xs-8">
                             {% for voucher in basket.vouchers.all %}
                                 <p class="voucher">
-                                    {% blocktrans with voucher_code=voucher.code %}
-                                        Codigo de descuento {{ voucher_code }} aplicado
-                                    {% endblocktrans %}
+                                    {% filter force_escape %}
+                                        {% blocktrans with voucher_code=voucher.code %}
+                                            Codigo de descuento {{ voucher_code }} aplicado
+                                        {% endblocktrans %}
+                                    {% endfilter %}
                                 <form action="{% url 'basket:vouchers-remove' pk=voucher.id %}" method="POST">
                                     {% csrf_token %}
                                     <button class="remove-voucher" type="submit"><i class="fa fa-times"></i>
@@ -108,9 +113,9 @@
                         {% if voucher_form %}
                             <div class="use-voucher col-sm-7 col-xs-8">
                                 <p id="voucher_form_link">
-                                    <a href="#voucher">{% trans "Aplicar codigo de descuento" %}</a>
+                                    <a href="#voucher">{% trans "Aplicar codigo de descuento" as tmsg %}{{ tmsg | force_escape }}</a>
                                 </p>
-                                {% include 'basket/partials/add_voucher_form.html' %}
+                                {% include 'oscar/basket/partials/add_voucher_form.html' %}
                             </div>
                         {% endif %}
                     {% endif %}
@@ -119,7 +124,7 @@
 
             <div id="basket_totals" class="col-xs-4">
                 {% block order_total %}
-                    {% trans "Total:" %}
+                    {% trans "Total:" as tmsg %}{{ tmsg | force_escape }}
                     {{ order_total.incl_tax|currency:"CLP " }}
                 {% endblock %}
             </div>
@@ -144,7 +149,7 @@
                        data-track-event="edx.bi.ecommerce.basket.free_checkout"
                        data-track-category="checkout"
                        class="btn btn-success checkout-button">
-                        {% trans "Place Order" %}
+                        {% trans "Place Order" as tmsg %}{{ tmsg | force_escape }}
                     </a>
                 {% else %}
                     {% for processor in payment_processors %}
@@ -156,12 +161,12 @@
                                 class="btn payment-button"
                                 id="{{ processor.NAME|lower }}">
                             {% if processor.NAME == 'cybersource' %}
-                                {% trans "Checkout" %}
+                                {% trans "Checkout" as tmsg %}{{ tmsg | force_escape }}
                             {% elif processor.NAME == 'webpay' %}
                                 Pagar con WebPay
                             {% elif processor.NAME == 'paypal' %}
                                 {# Translators: Do NOT translate the name PayPal. #}
-                                {% trans "Checkout with PayPal" %}
+                                {% trans "Checkout with PayPal" as tmsg %}{{ tmsg | force_escape }}
                             {% endif %}
                         </button>
                     {% endfor %}
@@ -175,17 +180,18 @@
             <span><i class="fa fa-exclamation-circle"></i></span>
             {# Translators: <strong></strong> tags will bold the text within. Keep the tags and translate the text within. #}
             {% if display_verification_message %}
-                {% trans "<strong>Note:</strong> To earn a verified certificate, you must verify your identity with a <strong>webcam</strong> and a <strong>government-issued photo ID</strong>. " %}
+                {% trans "{strong_start}Note:{strong_end} To earn a verified certificate, you must verify your identity with a {strong_start}webcam{strong_end} and a {strong_start}government-issued photo ID{strong_end}. " as tmsg %}
+                {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
             {% else %}
-                {% trans "<strong>Note:</strong> To complete your enrollment, select Checkout or Checkout with PayPal." %}
+                {% trans "{strong_start}Note:{strong_end} To complete your enrollment, select Checkout or Checkout with PayPal." as tmsg %}
+                {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
             {% endif %}
         </div>
     </div>
     <div class="row help">
         <div class="col-sm-12">
-            <p><strong>{% trans "Have questions?" %}</strong></p>
-            <a href="{{ support_url }}">{% trans "Please read our FAQs to view common questions about our certificates." %}</a>
+            <p><strong>{% trans "Have questions?" as tmsg %}{{ tmsg | force_escape }}</strong></p>
+            <a href="{{ support_url }}">{% trans "Please read our FAQs to view common questions about our certificates." as tmsg %}{{ tmsg | force_escape }}</a>
         </div>
     </div>
 </div>
-^R

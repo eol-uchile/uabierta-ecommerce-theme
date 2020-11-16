@@ -2,15 +2,18 @@
 {% load core_extras %}
 {% load currency_filters %}
 {% load i18n %}
+{% load django_markup %}
 {% load l10n %}
 {% load offer_tags %}
 {% load static %}
 {% load enterprise %}
 
 {% block title %}
+  {% filter force_escape %}
   {% blocktrans trimmed with order_number=order.number %}
     Receipt for {{ order_number }}
   {% endblocktrans %}
+  {% endfilter %}
 {% endblock title %}
 
 {% block javascript %}
@@ -26,8 +29,11 @@
        class="receipt container content-container"
        data-currency="CLP"
        data-order-id="{{ order.number }}"
-       data-total-amount="{{ order.total_incl_tax | unlocalize }}">
-      <h2 class="thank-you">{% trans "Thank you for your order!" %}</h2>
+       data-total-amount="{{ order.total_incl_tax | unlocalize }}"
+       data-back-button="{{ disable_back_button | default:0 }}">
+       {% include 'oscar/partials/alert_messages.html' %}
+
+      <h2 class="thank-you">{% trans "Thank you for your order!" as tmsg %}{{ tmsg | force_escape }}</h2>
 
       <div class="list-info">
         <div class="info-item payment-info row">
@@ -42,12 +48,14 @@
                       Un comprobante de esta compra, la boleta electrónica y los codigos de enrolamiento serán enviada por correo electrónico a
                       {{ link_start }}{{ email }}{{ link_end }}.
                   {% endblocktrans %}
+                  {% interpolate_html tmsg email=order.user.email|safe link_end="</a>"|safe link_start=link_start|safe %}
               {% else %}
                   {% blocktrans trimmed with email=order.user.email link_end="</a>" %}
                       Su orden de compra se ha completado. 
                       Un comprobante de esta compra y la boleta electrónica será enviada por correo electrónico a
                       {{ link_start }}{{ email }}{{ link_end }}.
                   {% endblocktrans %}
+                  {% interpolate_html tmsg email=order.user.email|safe link_end="</a>"|safe link_start=link_start|safe %}
               {% endif %}
             </div>
 
@@ -62,13 +70,13 @@
 
           <div class="order-headers order-summary col-md-4">
             <dl>
-              <dt>{% trans "Order Number:" %}</dt>
+              <dt>{% trans "Order Number:" as tmsg %}{{ tmsg | force_escape }}</dt>
               <dd>{{ order.number }}</dd>
               {% if payment_method %}
-                <dt>{% trans "Payment Method:" %}</dt>
-                <dd>{{ payment_method }}</dd>
+              <dt>{% trans "Payment Method:" as tmsg %}{{ tmsg | force_escape }}</dt>
+              <dd>{{ payment_method }}</dd>
               {% endif %}
-              <dt>{% trans "Order Date:" %}</dt>
+              <dt>{% trans "Order Date:" as tmsg %}{{ tmsg | force_escape }}</dt>
               <dd>{{ order.date_placed|date:"d E Y" }}</dd>
             </dl>
           </div>
@@ -78,34 +86,30 @@
         <div class="table">
           <dl class="order-lines">
             <div class="header">
-              <dt aria-hidden="true">{% trans "Quantity" %}</dt>
-              <dt aria-hidden="true">{% trans "Description" %}</dt>
-              <dt aria-hidden="true">{% trans "Item Price" %}</dt>
+              <dt aria-hidden="true">{% trans "Quantity" as tmsg %}{{ tmsg | force_escape }}</dt>
+              <dt aria-hidden="true">{% trans "Description" as tmsg %}{{ tmsg | force_escape }}</dt>
+              <dt aria-hidden="true">{% trans "Item Price" as tmsg %}{{ tmsg | force_escape }}</dt>
             </div>
             {% for line in order.lines.all %}
               <div class="order-line-data">
-                <dt class="quantity sr">{% trans "Quantity:" %}</dt>
+                <dt class="quantity sr">{% trans "Quantity:" as tmsg %}{{ tmsg | force_escape }}</dt>
                 <dd class="quantity">{{ line.quantity }}</dd>
-                <dt class="course-description sr">{% trans "Description:" %}</dt>
+                <dt class="course-description sr">{% trans "Description:" as tmsg %}{{ tmsg | force_escape }}</dt>
                 <dd class="course-description">
-                  {% if not line.product.course %}
                   <span>{{ line.title }}</span>
-                  {% endif %}
                   {% if line.product.course %}
-                    {{ line.product.course.name }}
                     <p class="course-description-subtitle" data-course-id="{{ line.product.course.id }}">
-                      {{ line.product.course.id }}
                       {{ line.product.course.id|course_organization }}
                     </p>
                   {% endif %}
                 </dd>
-                <dt class="line-price sr">{% trans "Item Price:" %}</dt>
+                <dt class="line-price sr">{% trans "Item Price:" as tmsg %}{{ tmsg | force_escape }}</dt>
                 <dd class="line-price price">{{ line.unit_price_incl_tax|currency:"CLP" }}</dd>
               </div>
             {% endfor %}
           </dl>
           <div class="order-total">
-            <div class="description">{% trans "Subtotal" %}</div>
+            <div class="description">{% trans "Subtotal" as tmsg %}{{ tmsg | force_escape }}</div>
             <div class="price">{{ order.total_before_discounts_incl_tax|currency:"CLP" }}</div>
           </div>
 
@@ -128,13 +132,19 @@
                     {% else %}
                         <span class="discount">
                             {% if offer.condition.enterprise_customer_name %}
-                                {% blocktrans trimmed with type=discount.offer.offer_type enterprise_name=discount.offer.condition.enterprise_customer_name %}
-                                    Discount of type {{ type }} provided by {{ enterprise_name }}
-                                {% endblocktrans %}
+                            {% filter force_escape %}
+                              {% blocktrans trimmed with type=discount.offer.offer_type enterprise_name=discount.offer.condition.enterprise_customer_name %}
+                                  Discount of type {{ type }} provided by {{ enterprise_name }}
+                              {% endblocktrans %}
+                            {% endfilter %}
+                            {% elif discount.offer.condition.name == 'dynamic_discount_condition' %}
+                              {% trans "Discount for your first upgrade" as tmsg %}{{ tmsg | force_escape }}
                             {% else %}
+                              {% filter force_escape %}
                                 {% blocktrans trimmed with type=discount.offer.offer_type %}
                                     Discount of type {{ type }} is provided.
                                 {% endblocktrans %}
+                              {% endfilter %}
                             {% endif %}
                         </span>
                     {% endif %}
@@ -144,9 +154,11 @@
                   {% enterprise_customer_for_voucher discount.voucher as enterprise_customer %}
                   {% if enterprise_customer %}
                       <div class="enterprise-customer">
-                        {% blocktrans trimmed with enterprise_name=enterprise_customer.name %}
-                            Courtesy of {{ enterprise_name }}.
-                        {% endblocktrans %}
+                        {% filter force_escape %}
+                          {% blocktrans trimmed with enterprise_name=enterprise_customer.name %}
+                              Courtesy of {{ enterprise_name }}.
+                          {% endblocktrans %}
+                        {% endfilter %}
                       </div>
                   {%  endif %}
                 </div>
@@ -156,45 +168,42 @@
           {% endwith %}
 
           <div class="order-total">
-            <div class="description">{% trans "Total" %}</div>
+            <div class="description">{% trans "Total" as tmsg %}{{ tmsg | force_escape }}</div>
             <div class="price">{{ order.total_incl_tax|currency:"CLP" }}</div>
           </div>
         </div>
 
         {% if display_credit_messaging %}
-          {% captureas link_start %}
-            <a href="{{ lms_dashboard_url }}">
-          {% endcaptureas %}
-
-          <div class="nav-wizard row">
-            <p class="header">{% trans "Get Your Course Credit" %}</p>
-            <p class="message">
-              {% blocktrans trimmed with link_end="</a>" %}
-                To receive academic credit for this course, you must apply for credit at the organization that offers the credit.
-                You can find a link to the organization’s website on your {{ link_start }}dashboard{{ link_end }}, next to the course name.
-              {% endblocktrans %}
-            </p>
-          </div>
-        {% endif %}
-      </div>
-
-      {% if not has_enrollment_code_product and show_verification_banner  %}
         <div class="nav-wizard row">
-            {% include 'oscar/checkout/_verification_data.html' %}
+          <p class="header">{% trans "Get Your Course Credit" as tmsg %}{{ tmsg | force_escape }}</p>
+          <p class="message">
+            {% blocktrans trimmed asvar tmsg %}
+              To receive academic credit for this course, you must apply for credit at the organization that offers the credit.
+              You can find a link to the organization’s website on your {link_start}{lms_dashboard_url}{link_middle}dashboard{link_end}, next to the course name.
+            {% endblocktrans %}
+            {% interpolate_html tmsg link_start='<a href="'|safe link_middle='">'|safe link_end='</a>'|safe lms_dashboard_url=lms_dashboard_url|safe %}
+          </p>
         </div>
       {% endif %}
-      <div id="cta-nav-links" class="row">
-        <div class="col-xs-12 text-right">
-          {% if not show_verification_banner %}
-          <a class="dashboard-link nav-link" href="{{ order_dashboard_url }}">
-            {% trans "Go to dashboard" %}
-          </a>
-          {% endif %}
-          <a class="find-more-courses-link nav-link" href="{{ explore_courses_url }}">
-            {% trans "Find more courses" %}
-          </a>
-        </div>
+    </div>
+
+    {% if not has_enrollment_code_product and show_verification_banner  %}
+      <div class="nav-wizard row">
+          {% include 'oscar/checkout/_verification_data.html' %}
+      </div>
+    {% endif %}
+    <div id="cta-nav-links" class="row">
+      <div class="col-xs-12 text-right">
+        {% if not show_verification_banner %}
+        <a class="dashboard-link nav-link" href="{{ order_dashboard_url }}">
+          {% trans "Go to dashboard" as tmsg %}{{ tmsg | force_escape }}
+        </a>
+        {% endif %}
+        <a class="find-more-courses-link nav-link" href="{{ explore_courses_url }}">
+          {% trans "Find more courses" as tmsg %}{{ tmsg | force_escape }}
+        </a>
       </div>
     </div>
   </div>
+</div>
 {% endblock content %}
