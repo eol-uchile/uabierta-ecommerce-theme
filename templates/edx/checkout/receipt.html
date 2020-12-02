@@ -193,7 +193,19 @@
       </div>
     {% endif %}
     <div id="cta-nav-links" class="row">
-      <div class="col-xs-12 text-right">
+      {% if boleta %}
+        <div class="col-sm-6 text-right" style="margin-bottom: 2rem;">
+          <a class="dashboard-link nav-link"
+            href="{% url 'recover_boleta' %}?order_number={{order.number}}"
+            target="blank"
+            style="background-color: green; color: white; border-radius: 0.5rem; padding: 1rem;">
+            {% trans "Obtener boleta" as tmsg %}{{ tmsg | force_escape }} <i class='fa fa-file-pdf-o' style="color: red; background-color: white;"></i>
+          </a>
+        </div>
+      <div class="col-sm-6 text-right">
+      {% else %}
+      <div class="col-sm-12 text-right">
+      {% endif %}
         {% if not show_verification_banner %}
         <a class="dashboard-link nav-link" href="{{ order_dashboard_url }}">
           {% trans "Go to dashboard" as tmsg %}{{ tmsg | force_escape }}
