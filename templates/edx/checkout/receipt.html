@@ -90,7 +90,7 @@
               <dt aria-hidden="true">{% trans "Description" as tmsg %}{{ tmsg | force_escape }}</dt>
               <dt aria-hidden="true">{% trans "Item Price" as tmsg %}{{ tmsg | force_escape }}</dt>
             </div>
-            {% for line in order.lines.all %}
+            {% for line in custom_order_lines %}
               <div class="order-line-data">
                 <dt class="quantity sr">{% trans "Quantity:" as tmsg %}{{ tmsg | force_escape }}</dt>
                 <dd class="quantity">{{ line.quantity }}</dd>
