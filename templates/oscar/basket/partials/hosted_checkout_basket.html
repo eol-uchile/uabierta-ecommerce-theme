@@ -6,177 +6,181 @@
 {% load widget_tweaks %}
 
 {% if not is_bulk_purchase %}
-    {% include 'oscar/partials/alert_messages.html' %}
+{% include 'oscar/partials/alert_messages.html' %}
 {% endif %}
-
+<style>
+    .billing-form .form-group {
+        width: 100%;
+    }
+</style>
 <div id="content-inner">
     {% block basket_form_main %}
-        <form action="." method="post">
-            {% csrf_token %}
-            {{ formset.management_form }}
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
 
-            {% for form, line_data in formset_lines_data %}
-                {% purchase_info_for_line request line_data.line as session %}
-                <div class="basket-items">
-                    {% if line_data.seat_type %}
-                        <p class="certificate_type">
-                            Obtenga un certificado de realización del curso:
-                        </p>
-                    {% endif %}
-                    <div class="row">
-                        <div class="col-md-2 col-sm-12 product-image">
-                            {{ form.id }}
-                            <img class="thumbnail" src="{{ line_data.image_url|default_if_none:'' }}"
-                                 alt="{{ line_data.product_title|default_if_none:'' }}"/>
-                        </div>
-                        <div class="col-md-5 col-sm-12">
-                            <p class="product-title">{{ line_data.product_title }} {% if line_data.course_key %}- {{ line_data.course_key.org }}
-                                ({{ line_data.course_key.run }}) {% endif %}</p>
-                            <p class="product-description">{{ line_data.product_description|default_if_none:'' }}</p>
-                        </div>
-                        {% if line_data.enrollment_code %}
-                            <div class="col-md-1 col-xs-12">
-                                <label class="product-price-label text-muted">{% trans 'Precio por ítem' as tmsg %}{{ tmsg | force_escape }}</label>
-                                <span>{{ line_data.line.price_incl_tax|currency:"CLP " }}</span>
-                            </div>
-                            <div class="col-md-3 col-xs-12 form-inline">
-                                <label class="product-price-label text-muted">{% trans 'Quantity' as tmsg %}{{ tmsg | force_escape }}</label>
-                                <div class="checkout-quantity form-group">
-                                    <div class="input-group spinner  {% if form.errors %}error{% endif %}">
-                                        {% render_field form.quantity class+="quantity form-control" min=min_seat_quantity %}
-                                        <div class="input-group-btn-vertical">
-                                            <button class="btn btn-primary" type="button">
-                                              <i class="fa fa-caret-up"></i>
-                                            </button>
-                                            <button class="btn btn-primary" type="button">
-                                              <i class="fa fa-caret-down"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-primary update-button" type="submit"
-                                        data-loading-text="{% trans 'Updating...' as tmsg %}{{ tmsg | force_escape }}">{% trans "Update" as tmsg %}{{ tmsg | force_escape }}</button>
-                                </div>
-                            </div>
-                        {% endif %}
-                        <div class="col-md-{% if line_data.enrollment_code %}1{% else %}5{% endif %} col-xs-12 product-prices pull-right">
-                            {% if line_data.enrollment_code %}
-                            <label class="product-price-label text-muted">{% trans 'Price' as tmsg %}{{ tmsg | force_escape }}</label>
-                            {% endif %}
-
-                            {% if line_data.line.has_discount %}
-                                <div class="discount">
-                                    <div class="benefit">
-                                        {% filter force_escape %}
-                                            {% blocktrans with benefit_value=line_data.benefit_value %}
-                                                {{ benefit_value }} off
-                                            {% endblocktrans %}
-                                        {% endfilter %}
-                                    </div>
-                                    <div class="old-price">
-                                        {{ line_data.line.line_price_incl_tax|currency:"CLP " }}
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <div class="price {% if line_data.line.has_discount %}discounted{% endif %}">
-                                {{ line_data.line.line_price_incl_tax_incl_discounts|currency:"CLP " }}
+        {% for form, line_data in formset_lines_data %}
+        {% purchase_info_for_line request line_data.line as session %}
+        <div class="basket-items">
+            {% if line_data.seat_type %}
+            <p class="certificate_type">
+                Obtenga un certificado de realización del curso:
+            </p>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-2 col-sm-12 product-image">
+                    {{ form.id }}
+                    <img class="thumbnail" src="{{ line_data.image_url|default_if_none:'' }}"
+                        alt="{{ line_data.product_title|default_if_none:'' }}" />
+                </div>
+                <div class="col-md-5 col-sm-12">
+                    <p class="product-title">{{ line_data.product_title }} {% if line_data.course_key %}-
+                        {{ line_data.course_key.org }}
+                        ({{ line_data.course_key.run }}) {% endif %}</p>
+                    <p class="product-description">{{ line_data.product_description|default_if_none:'' }}</p>
+                </div>
+                {% if line_data.enrollment_code %}
+                <div class="col-md-1 col-xs-12">
+                    <label
+                        class="product-price-label text-muted">{% trans 'Precio por ítem' as tmsg %}{{ tmsg | force_escape }}</label>
+                    <span>{{ line_data.line.price_incl_tax|currency:"CLP " }}</span>
+                </div>
+                <div class="col-md-3 col-xs-12 form-inline">
+                    <label
+                        class="product-price-label text-muted">{% trans 'Quantity' as tmsg %}{{ tmsg | force_escape }}</label>
+                    <div class="checkout-quantity form-group">
+                        <div class="input-group spinner  {% if form.errors %}error{% endif %}">
+                            {% render_field form.quantity class+="quantity form-control" min=min_seat_quantity %}
+                            <div class="input-group-btn-vertical">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fa fa-caret-up"></i>
+                                </button>
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fa fa-caret-down"></i>
+                                </button>
                             </div>
                         </div>
+                        <button class="btn btn-primary update-button" type="submit"
+                            data-loading-text="{% trans 'Updating...' as tmsg %}{{ tmsg | force_escape }}">{% trans "Update" as tmsg %}{{ tmsg | force_escape }}</button>
                     </div>
                 </div>
-            {% endfor %}
-        </form>
+                {% endif %}
+                <div
+                    class="col-md-{% if line_data.enrollment_code %}1{% else %}5{% endif %} col-xs-12 product-prices pull-right">
+                    {% if line_data.enrollment_code %}
+                    <label
+                        class="product-price-label text-muted">{% trans 'Price' as tmsg %}{{ tmsg | force_escape }}</label>
+                    {% endif %}
+
+                    {% if line_data.line.has_discount %}
+                    <div class="discount">
+                        <div class="benefit">
+                            {% filter force_escape %}
+                            {% blocktrans with benefit_value=line_data.benefit_value %}
+                            {{ benefit_value }} off
+                            {% endblocktrans %}
+                            {% endfilter %}
+                        </div>
+                        <div class="old-price">
+                            {{ line_data.line.line_price_incl_tax|currency:"CLP " }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="price {% if line_data.line.has_discount %}discounted{% endif %}">
+                        {{ line_data.line.line_price_incl_tax_incl_discounts|currency:"CLP " }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </form>
     {% endblock %}
 
     <div class="total">
         <div class="row">
             {% if show_voucher_form %}
-                {% block vouchers %}
-                    {% if basket.contains_a_voucher %}
-                        <div class="vouchers col-sm-7 col-xs-8">
-                            {% for voucher in basket.vouchers.all %}
-                                <p class="voucher">
-                                    {% filter force_escape %}
-                                        {% blocktrans with voucher_code=voucher.code %}
-                                            Codigo de descuento {{ voucher_code }} aplicado
-                                        {% endblocktrans %}
-                                    {% endfilter %}
-                                <form action="{% url 'basket:vouchers-remove' pk=voucher.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <button class="remove-voucher" type="submit"><i class="fa fa-times"></i>
-                                    </button>
-                                </form>
-                                </p>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {# Hide the entire section if a custom BasketView doesn't pass in a voucher form #}
-                        {% if voucher_form %}
-                            <div class="use-voucher col-sm-7 col-xs-8">
-                                <p id="voucher_form_link">
-                                    <a href="#voucher">{% trans "Aplicar codigo de descuento" as tmsg %}{{ tmsg | force_escape }}</a>
-                                </p>
-                                {% include 'oscar/basket/partials/add_voucher_form.html' %}
-                            </div>
-                        {% endif %}
-                    {% endif %}
-                {% endblock vouchers %}
+            {% block vouchers %}
+            {% if basket.contains_a_voucher %}
+            <div class="vouchers col-sm-7 col-xs-8">
+                {% for voucher in basket.vouchers.all %}
+                <p class="voucher">
+                    {% filter force_escape %}
+                    {% blocktrans with voucher_code=voucher.code %}
+                    Codigo de descuento {{ voucher_code }} aplicado
+                    {% endblocktrans %}
+                    {% endfilter %}
+                <form action="{% url 'basket:vouchers-remove' pk=voucher.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="remove-voucher" type="submit"><i class="fa fa-times"></i>
+                    </button>
+                </form>
+                </p>
+                {% endfor %}
+            </div>
+            {% else %}
+            {# Hide the entire section if a custom BasketView doesn't pass in a voucher form #}
+            {% if voucher_form %}
+            <div class="use-voucher col-sm-7 col-xs-8">
+                <p id="voucher_form_link">
+                    <a href="#voucher">{% trans "Aplicar codigo de descuento" as tmsg %}{{ tmsg | force_escape }}</a>
+                </p>
+                {% include 'oscar/basket/partials/add_voucher_form.html' %}
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endblock vouchers %}
             {% endif %}
 
             <div id="basket_totals" class="col-xs-4">
                 {% block order_total %}
-                    {% trans "Total:" as tmsg %}{{ tmsg | force_escape }}
-                    {{ order_total.incl_tax|currency:"CLP " }}
+                {% trans "Total:" as tmsg %}{{ tmsg | force_escape }}
+                {{ order_total.incl_tax|currency:"CLP " }}
                 {% endblock %}
             </div>
         </div>
     </div>
-
     <div class="row">
         <div class="col-sm-12">
-            {# Switch Basket view in between single and bulk purchase items #}
-            {% if partner_sku %}
+            <h4>
+                <b>Información de facturación</b>
+            </h4>
+            <div id="alert-placeholder"></div>
+            <form id="billing-info" class="form-horizontal billing-form">
+                {% include 'oscar/basket/partials/boleta_billing_form.html' %}
+                {# Switch Basket view in between single and bulk purchase items #}
+                {% if partner_sku %}
                 <div class="pull-left basket-switch-link">
                     <a href="/basket/add/?sku={{ partner_sku }}" class="btn btn-link">
-                        {# {{ switch_link_text }} #}
-                        {% if switch_link_text == "Click here to purchase multiple seats in this course" %}
-                            Hace click aquí para comprar múltiples cupos para este curso.
-                        {% else %}
-                            Hace click aquí para comprar un cupo individual.
-                        {% endif %}
+                        {{switch_link_text}}
                     </a>
                 </div>
-            {% endif %}
-
-            <div class="pull-right payment-buttons" data-basket-id="{{ basket.id }}">
-                {% if free_basket %}
-                    <a href="{% url 'checkout:free-checkout' %}"
-                       data-track-type="click"
-                       data-track-event="edx.bi.ecommerce.basket.free_checkout"
-                       data-track-category="checkout"
-                       class="btn btn-success checkout-button">
+                {% endif %}
+                <div class="pull-right payment-buttons" data-basket-id="{{ basket.id }}">
+                    {% if free_basket %}
+                    <a href="{% url 'checkout:free-checkout' %}" data-track-type="click"
+                        data-track-event="edx.bi.ecommerce.basket.free_checkout" data-track-category="checkout"
+                        class="btn btn-success checkout-button">
                         {% trans "Place Order" as tmsg %}{{ tmsg | force_escape }}
                     </a>
-                {% else %}
+                    {% else %}
                     {% for processor in payment_processors %}
-                        <button data-track-type="click"
-                                data-track-event="edx.bi.ecommerce.basket.payment_selected"
-                                data-track-category="checkout"
-                                data-processor-name="{{ processor.NAME|lower }}"
-                                data-track-checkout-type="hosted"
-                                class="btn payment-button"
-                                id="{{ processor.NAME|lower }}">
-                            {% if processor.NAME == 'cybersource' %}
-                                {% trans "Checkout" as tmsg %}{{ tmsg | force_escape }}
-                            {% elif processor.NAME == 'webpay' %}
-                                Pagar con WebPay
-                            {% elif processor.NAME == 'paypal' %}
-                                {# Translators: Do NOT translate the name PayPal. #}
-                                {% trans "Checkout with PayPal" as tmsg %}{{ tmsg | force_escape }}
-                            {% endif %}
-                        </button>
+                    <button data-track-type="click" data-track-event="edx.bi.ecommerce.basket.payment_selected"
+                        data-track-category="checkout" data-processor-name="{{ processor.NAME|lower }}"
+                        data-track-checkout-type="hosted" class="btn payment-button" id="{{ processor.NAME|lower }}"
+                        type="submit">
+                        {% if processor.NAME == 'cybersource' %}
+                        {% trans "Checkout" as tmsg %}{{ tmsg | force_escape }}
+                        {% elif processor.NAME == 'webpay' %}
+                        Pagar con WebPay
+                        {% elif processor.NAME == 'paypal' %}
+                        {# Translators: Do NOT translate the name PayPal. #}
+                        {% trans "Checkout with PayPal" as tmsg %}{{ tmsg | force_escape }}
+                        {% endif %}
+                    </button>
                     {% endfor %}
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+            </form>
         </div>
     </div>
 
@@ -185,11 +189,11 @@
             <span><i class="fa fa-exclamation-circle"></i></span>
             {# Translators: <strong></strong> tags will bold the text within. Keep the tags and translate the text within. #}
             {% if display_verification_message %}
-                {% trans "{strong_start}Nota:{strong_end} Para obtener un certificado verificado, debe verificar su identidad con una {strong_start}cámara web{strong_end} y una  {strong_start}fotografía de su documento de identidad{strong_end}. " as tmsg %}
-                {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
+            {% trans "{strong_start}Nota:{strong_end} Para obtener un certificado verificado, debe verificar su identidad con una {strong_start}cámara web{strong_end} y una  {strong_start}fotografía de su documento de identidad{strong_end}. " as tmsg %}
+            {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
             {% else %}
-                {% trans "{strong_start}Nota:{strong_end} Para completar su inscripción, seleccione Pagar." as tmsg %}
-                {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
+            {% trans "{strong_start}Nota:{strong_end} Para completar su inscripción, seleccione Pagar." as tmsg %}
+            {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
             {% endif %}
         </div>
     </div>
