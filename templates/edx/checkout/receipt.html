@@ -195,12 +195,19 @@
     <div id="cta-nav-links" class="row">
       {% if boleta %}
         <div class="col-sm-6 text-right" style="margin-bottom: 2rem;">
+          {% if boleta_ready%}
           <a class="dashboard-link nav-link"
             href="{% url 'recover_boleta' %}?order_number={{order.number}}"
             target="blank"
             style="background-color: green; color: white; border-radius: 0.5rem; padding: 1rem;">
             {% trans "Obtener boleta" as tmsg %}{{ tmsg | force_escape }} <i class='fa fa-file-pdf-o' style="color: red; background-color: white;"></i>
           </a>
+          {% else %}
+          <a class="dashboard-link nav-link"
+            style="background-color: gray; color: white; border-radius: 0.5rem; padding: 1rem;">
+            {% trans "Estamos procesando su boleta" as tmsg %}{{ tmsg | force_escape }} <i class='fa fa-file-pdf-o' style="color: red; background-color: white;"></i>
+          </a>
+          {% endif %}
         </div>
       <div class="col-sm-6 text-right">
       {% else %}
