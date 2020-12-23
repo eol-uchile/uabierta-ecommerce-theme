@@ -36,11 +36,11 @@
           placeholder="11111111-1 o Pasaporte" maxlength="14" name="id_number" required>
   </div>
 </div>
-<div class="form-group" id="bIdAlternative-wrapper">
+<div class="form-group hidden" id="bIdAlternative-wrapper">
   <label for="bIdAlternative" class="col-sm-2 control-label"></label>
   <div class="col-sm-5">
       <input type="text" class="form-control" id="bIdAlternative" aria-describedby="id alternativa"
-      placeholder="Ej: DNI o documento nacional de identidad" maxlength="70" name="id_number">
+      placeholder="Ej: DNI o documento nacional de identidad" maxlength="70" name="id_other">
       <small id="id_type_help" class="form-text text-muted">Indique el tipo de su  documento de identidad.</small>
   </div>
 </div>
@@ -54,16 +54,19 @@
 </div>
 <div class="form-group">
   <label for="bDistrict" class="col-sm-2 control-label">Comuna y Ciudad</label>
-  <div class="col-sm-3">
+  <div class="col-sm-5">
       <input type="text" class="form-control" id="bDistrict"
           aria-describedby="direccion: comuna" placeholder="Comuna"
           name="billing_district" required>
   </div>
-  <div class="col-sm-4">
+  <div class="col-sm-5">
       <input type="text" class="form-control" id="bCity" aria-describedby="direccion: ciudad"
           placeholder="Ciudad" maxlength="50" name="billing_city" required>
   </div>
-  <div class="col-sm-3">
+</div>
+<div class="form-group">
+  <label for="bCountry" class="col-sm-2 control-label">País</label>
+  <div class="col-sm-5">
     <select class="form-control" id="bCountry" aria-describedby="direccion: pais"
           placeholder="Pais" name="billing_country" required>
           <option value="AF">	Afganistán</option>
