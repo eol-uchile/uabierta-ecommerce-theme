@@ -2,7 +2,7 @@
   <label for="nombres" class="col-sm-2 control-label">Nombres</label>
   <div class="col-sm-10">
       <input type="text" class="form-control" id="nombres" aria-describedby="Pon tus nombres aqui"
-          placeholder="Nombres" name="first_name" required>
+          placeholder="Nombres" name="first_name" required maxlength="100">
   </div>
 </div>
 <div class="form-group">
@@ -10,12 +10,12 @@
   <div class="col-sm-5">
       <input type="text" class="form-control" id="apellidoP"
           aria-describedby="Pon tu apellido paterno aqui" placeholder="Apellido paterno"
-          name="last_name_1" required>
+          name="last_name_1" required maxlength="255">
   </div>
   <div class="col-sm-5">
       <input type="text" class="form-control" id="apellidoM"
           aria-describedby="Pon tu apellido materno aqui" placeholder="Apellido materno"
-          name="last_name_2">
+          name="last_name_2" maxlength="255">
       <small id="last_name_help" class="form-text text-muted">Si no aplica puede dejar este campo
           vacío.</small>
   </div>
@@ -40,7 +40,7 @@
   <label for="bIdAlternative" class="col-sm-2 control-label"></label>
   <div class="col-sm-5">
       <input type="text" class="form-control" id="bIdAlternative" aria-describedby="id alternativa"
-      placeholder="Ej: DNI o documento nacional de identidad" maxlength="70" name="id_other">
+      placeholder="Ej: DNI o documento nacional de identidad" maxlength="70" name="id_other" maxlength="100">
       <small id="id_type_help" class="form-text text-muted">Indique el tipo de su  documento de identidad.</small>
   </div>
 </div>
@@ -49,7 +49,7 @@
   <div class="col-sm-10">
       <input type="text" class="form-control" id="bAddress"
           aria-describedby="direccion de facturacion" placeholder="Calle, numero, departamento"
-          name="billing_address" required>
+          name="billing_address" required maxlength="255">
   </div>
 </div>
 <div class="form-group">
@@ -57,11 +57,11 @@
   <div class="col-sm-5">
       <input type="text" class="form-control" id="bDistrict"
           aria-describedby="direccion: comuna" placeholder="Comuna"
-          name="billing_district" required>
+          name="billing_district" required maxlength="50">
   </div>
   <div class="col-sm-5">
       <input type="text" class="form-control" id="bCity" aria-describedby="direccion: ciudad"
-          placeholder="Ciudad" maxlength="50" name="billing_city" required>
+          placeholder="Ciudad" maxlength="50" name="billing_city" required maxlength="50">
   </div>
 </div>
 <div class="form-group">
