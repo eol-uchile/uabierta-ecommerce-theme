@@ -44,9 +44,9 @@
               {% endcaptureas %}
               {% if has_enrollment_code_product %}
                   {% blocktrans trimmed with email=order.user.email link_end="</a>" %}
-                      Su orden de compra se ha completado.
-                      Un comprobante de esta compra, la boleta electrónica y los codigos de enrolamiento serán enviada por correo electrónico a
-                      {{ link_start }}{{ email }}{{ link_end }}.
+                      Su orden de compra se ha completado. Puede acceder a este comprobante desde Cuenta / Historial de órdenes.
+                      <!-- Un comprobante de esta compra, la boleta electrónica y los codigos de enrolamiento serán enviada por correo electrónico a
+                      {{ link_start }}{{ email }}{{ link_end }}. -->
                   {% endblocktrans %}
                   {% interpolate_html tmsg email=order.user.email|safe link_end="</a>"|safe link_start=link_start|safe %}
               {% else %}
@@ -104,13 +104,13 @@
                   {% endif %}
                 </dd>
                 <dt class="line-price sr">{% trans "Item Price:" as tmsg %}{{ tmsg | force_escape }}</dt>
-                <dd class="line-price price">{{ line.unit_price_incl_tax|currency:"CLP" }}</dd>
+                <dd class="line-price price">{{ line.unit_price_incl_tax|currency:"CLP " }}</dd>
               </div>
             {% endfor %}
           </dl>
           <div class="order-total">
             <div class="description">{% trans "Subtotal" as tmsg %}{{ tmsg | force_escape }}</div>
-            <div class="price">{{ order.total_before_discounts_incl_tax|currency:"CLP" }}</div>
+            <div class="price">{{ order.total_before_discounts_incl_tax|currency:"CLP " }}</div>
           </div>
 
           {% with discounts=order.basket_discounts %}
@@ -150,7 +150,7 @@
                     {% endif %}
 
                   </div>
-                  <div class="price">-{{ discount.amount|currency:"CLP" }}</div>
+                  <div class="price">-{{ discount.amount|currency:"CLP " }}</div>
                   {% enterprise_customer_for_voucher discount.voucher as enterprise_customer %}
                   {% if enterprise_customer %}
                       <div class="enterprise-customer">
@@ -169,7 +169,7 @@
 
           <div class="order-total">
             <div class="description">{% trans "Total" as tmsg %}{{ tmsg | force_escape }}</div>
-            <div class="price">{{ order.total_incl_tax|currency:"CLP" }}</div>
+            <div class="price">{{ order.total_incl_tax|currency:"CLP " }}</div>
           </div>
         </div>
 
