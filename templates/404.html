@@ -1,0 +1,29 @@
+{% extends "edx/base.html" %} 
+
+{% block content %}
+
+<div id="error-container">
+  <div
+    class="error-message container depth depth-2 message-error-content"
+    style="margin-top: 1.2rem"
+  >
+    <h2 class="title" style="font-size: 4rem">
+      <span class="sr">Error 404</span>OOPS!<br /><span
+        style="font-size: 1.5rem; font-weight: 700"
+        >404 - La página solicitada no existe</span
+      >
+    </h2>
+    <div class="copy">
+      <p>
+        Si crees que esto es un error por favor contactate con soporte en la
+        página principal.
+      </p>
+      <br />
+      <div class="msg">
+        <p>{{exception}}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
