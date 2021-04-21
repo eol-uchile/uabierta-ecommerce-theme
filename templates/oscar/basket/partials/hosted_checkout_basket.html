@@ -167,6 +167,7 @@
                     <button data-track-type="click" data-track-event="edx.bi.ecommerce.basket.payment_selected"
                         data-track-category="checkout" data-processor-name="{{ processor.NAME|lower }}"
                         data-track-checkout-type="hosted" class="btn payment-button" id="{{ processor.NAME|lower }}"
+                        onclick="document.getElementById('payment-processor-hidden').value='{{ processor.NAME|lower }}'"
                         type="submit">
                         {% if processor.NAME == 'cybersource' %}
                         {% trans "Checkout" as tmsg %}{{ tmsg | force_escape }}
