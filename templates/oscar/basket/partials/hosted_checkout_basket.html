@@ -175,7 +175,7 @@
                         Pagar con WebPay
                         {% elif processor.NAME == 'paypal' %}
                         {# Translators: Do NOT translate the name PayPal. #}
-                        {% trans "Checkout with PayPal" as tmsg %}{{ tmsg | force_escape }}
+                        {% trans "Checkout with PayPal" as tmsg %}{{ tmsg | force_escape }} (USD)
                         {% endif %}
                     </button>
                     {% endfor %}
