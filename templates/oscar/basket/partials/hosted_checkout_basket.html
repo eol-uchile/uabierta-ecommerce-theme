@@ -149,11 +149,11 @@
                 {% include 'oscar/basket/partials/boleta_billing_form.html' %}
                 {# Switch Basket view in between single and bulk purchase items #}
                 {% if partner_sku %}
-                <div class="pull-left basket-switch-link">
+                <!-- <div class="pull-left basket-switch-link">
                     <a href="/basket/add/?sku={{ partner_sku }}" class="btn btn-link">
                         {{switch_link_text}}
                     </a>
-                </div>
+                </div> -->
                 {% endif %}
                 <div class="pull-right payment-buttons" data-basket-id="{{ basket.id }}">
                     {% if free_basket %}
